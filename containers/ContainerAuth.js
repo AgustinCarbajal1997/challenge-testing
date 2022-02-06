@@ -75,9 +75,12 @@ class ContainerAuth {
   async login(dataUser) {
     try {
       let data = await User.findOne({ mail: dataUser.mail });
+      if (!data) return { status: 401, message: "Usuario o contraseña incorrecto" };
       const match = await bcrypt.compare(dataUser.password, data.password);
-      if (!match) return { message: "Usuario o contraseña incorrecto" };
+
+      if (!match) return { status: 401, message: "Usuario o contraseña incorrecto" };
       return {
+        status: 200,
         message: "Successful login",
         access_token: this.generateToken({ user: data.userName, id: data.id }),
       };
