@@ -6,27 +6,48 @@ class ContainerProducts {
   async getAll() {
     try {
       const data = await Product.find({});
-      return data;
+      return {
+        status: 200,
+        message: "Successfull request",
+        data,
+      };
     } catch (error) {
-      throw { message: "Ha ocurrido un error" };
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 
   async getById(id) {
     try {
       const data = await Product.findById(id).exec();
-      return data;
+      return {
+        status: 200,
+        message: "Successfull request",
+        data,
+      };
     } catch (error) {
-      throw { message: "Ha ocurrido un error" };
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 
-  async getSeveralIds(ids){
+  async getSeveralIds(ids) {
     try {
-      const data = await Product.find({ _id:{ $in:ids } })
-      return data;
+      const data = await Product.find({ _id: { $in: ids } });
+      return {
+        status: 200,
+        message: "Successfull request",
+        data,
+      };
     } catch (error) {
-      throw { message: "Ha ocurrido un error" };
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 
@@ -36,31 +57,50 @@ class ContainerProducts {
         article: category,
         "brand.name": { $in: brandType },
       }).sort(orderBy ? { price: orders[orderBy] } : { $natural: 1 });
-      return data;
+      return {
+        status: 200,
+        message: "Successfull request",
+        data,
+      };
     } catch (error) {
-      console.log(error);
-      throw { message: "Ha ocurrido un error" };
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 
   async getByDiscount(categoryDiscount) {
     try {
       const data = await Product.find({ [categoryDiscount]: { $gt: 0 } });
-      return data;
+      return {
+        status: 200,
+        message: "Successfull request",
+        data,
+      };
     } catch (error) {
-      throw { message: "Ha ocurrido un error" };
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 
-  async generalSearch(q, limit) {
+  async generalSearch(regexList, limit) {
     try {
-      const regexList = q.map((item) => new RegExp(`${item}`, "i"));
       const data = await Product.find({ title: { $all: regexList } }).limit(
         Number(limit) || 0
       );
-      return data;
+      return {
+        status: 200,
+        message: "Successfull request",
+        data,
+      };
     } catch (error) {
-      throw { message: "Ha ocurrido un error" };
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 
@@ -96,17 +136,23 @@ class ContainerProducts {
         id: item.id,
         image: item.images[0],
         title: item.title,
-        price:item.price
+        price: item.price,
       }));
 
       fields = {
         products: comparison,
         ...fields,
       };
-
-      return fields;
+      return {
+        status: 200,
+        message: "Successfull request",
+        data: fields,
+      };
     } catch (error) {
-      throw error;
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 
@@ -157,9 +203,16 @@ class ContainerProducts {
             new: true,
           }));
 
-      return { message: "Successfully updated", update };
+      return {
+        status: 200,
+        message: "Successfull request",
+        data: update,
+      };
     } catch (error) {
-      throw { message: `Something have gone wrong. ${error}` };
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 }

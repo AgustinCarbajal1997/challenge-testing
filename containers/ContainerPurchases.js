@@ -8,42 +8,54 @@ class ContainerPurchases {
       const dataPurchases = await Purchase.find({
         _id: { $in: [...dataUser.purchases] },
       });
-      return { dataPurchases };
+      return {
+        status: 200,
+        message: "Successfull request",
+        dataPurchases,
+      };
     } catch (error) {
-      throw { message: `Something have gone wrong. ${error}` };
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 
-  async confirmPurchase(userId) {
+  async confirmPurchase(userId, dataBuyer) {
     try {
       const dataUser = await User.findById(userId);
       const total = dataUser.cart.reduce(
-        (ac, item) => ac + item.unites * item.price,
+        (ac, item) => ac + item.quantity * item.price,
         0
       );
       const newPurchase = new Purchase({
+        ...dataBuyer,
         products: dataUser.cart,
         total,
       });
       const dataPurchase = await newPurchase.save();
-      const addPurchaseUser = await User.findByIdAndUpdate(
+      const newData = await User.findByIdAndUpdate(
         userId,
         {
           $push: {
             purchases: dataPurchase.id,
           },
-          $set:{
-              cart:[]
-          }
+          $set: {
+            cart: [],
+          },
         },
         { new: true }
       );
       return {
-        message: "Purchase successfully finished",
-        dataUser: addPurchaseUser,
+        status: 200,
+        message: "Successfull request",
+        dataUser: newData,
       };
     } catch (error) {
-      throw { message: `Something have gone wrong. ${error}` };
+      throw {
+        status: 500,
+        message: `Something have gone wrong. Unsuccessful action. ${error.message}`,
+      };
     }
   }
 }

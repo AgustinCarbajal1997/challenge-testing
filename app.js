@@ -8,6 +8,7 @@ const products = require("./routes/products");
 const auth = require("./routes/auth");
 const carts = require("./routes/carts");
 const purchases = require("./routes/purchases");
+require("./db/mongo_connection");
 
 const PORT = process.env.PORT || 3000;
 
@@ -23,9 +24,7 @@ app.use("/api/products", products);
 app.use("/api/auth", auth);
 app.use("/api/cart", carts);
 app.use("/api/purchase", purchases)
-app.use("/", (req, res) => {
-  res.send("Servidor funcionando correctamente");
-});
+
 
 app.listen(PORT, () => {
   console.log("Server running on PORT", PORT);

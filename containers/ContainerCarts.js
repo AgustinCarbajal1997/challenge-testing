@@ -9,7 +9,7 @@ class ContainerCarts {
       throw { message: `Something have gone wrong. ${error}` };
     }
   }
-
+  // tratar de separar toda la logica cuando haga el daos, que todo pase a services y solo las consultas queden en daos
   async postCart(userId, dataProduct) {
     try {
       const data = await User.findById(userId);
@@ -19,41 +19,31 @@ class ContainerCarts {
           (item) => item.productId === dataProduct.productId
         );
         findProduct === -1
-          ? cart = [...cart, dataProduct]
-          : cart[findProduct] = dataProduct
-      }else{
-        cart = [...cart,dataProduct]
+          ? (cart = [...cart, dataProduct])
+          : (cart[findProduct] = dataProduct);
+      } else {
+        cart = [...cart, dataProduct];
       }
       const query = {
-        $set:{
-          cart
-        }
-      }
+        $set: {
+          cart,
+        },
+      };
       const newData = await User.findByIdAndUpdate(userId, query, {
         new: true,
       });
-      return { message:"Successfully created", dataUser:newData }
-
+      return {
+        status: 200,
+        message: "Successfully created",
+        dataUser: newData,
+      };
     } catch (error) {
-      throw { message: `Something have gone wrong cuate. ${error}` };
+      throw {
+        status: 500,
+        message: `Something have gone wrong cuate. ${error}`,
+      };
     }
   }
-
-  // async updateCart(userId, dataProduct) {
-  //   try {
-  //     const queryUpdate = {
-  //       $push: {
-  //         cart: dataProduct,
-  //       },
-  //     };
-  //     const data = await User.findByIdAndUpdate(userId, queryUpdate, {
-  //       new: true,
-  //     });
-  //     return { cart: data.cart };
-  //   } catch (error) {
-  //     throw { message: `Something have gone wrong. ${error}` };
-  //   }
-  // }
 
   async deleteProductCart(userId, productId) {
     try {
@@ -67,9 +57,12 @@ class ContainerCarts {
       const data = await User.findByIdAndUpdate(userId, queryDelete, {
         new: true,
       });
-      return { dataUser: data };
+      return { status: 200, message: "Successfully created", dataUser: data };
     } catch (error) {
-      throw { message: `Something have gone wrong. ${error}` };
+      throw {
+        status: 500,
+        message: `Something have gone wrong cuate. ${error}`,
+      };
     }
   }
 }
